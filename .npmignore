@@ -1,0 +1,37 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+
+# Coverage reports
+coverage
+
+# Dependency directory
+node_modules
+bower_components
+
+# Editors
+.idea
+*.iml
+
+ package.json
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+
+# Ignore tests and doc
+test/**/*
+doc/**/*
+
+# Ignore Source ts files
+index.ts
+lib/**/*.ts
+!lib/**/*.d.ts
+package-lock.json
