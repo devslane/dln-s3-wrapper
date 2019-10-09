@@ -1,4 +1,5 @@
 import { S3Credentials } from "./helpers/s3-credentials";
+import { S3UrlKeyPosition } from "./helpers/enums/s3-url-key-postition.enum";
 
 export class DlnS3 {
     private readonly KEY: string;
@@ -17,7 +18,25 @@ export class DlnS3 {
         return new DlnS3(credentials);
     }
 
-    test() {
-        return "pass";
+    getRootUrl({
+                   isAccelerated = false,
+                   keyPosition = S3UrlKeyPosition.PARAM
+               } = {}): string {
+        const _tld = keyPosition === S3UrlKeyPosition.TLD ? this.BUCKET + "." : "";
+        const _param = keyPosition === S3UrlKeyPosition.PARAM ? this.BUCKET + "/" : "";
+
+        const _s3Domain = isAccelerated ? "s3-accelerate" : "s3." + this.REGION;
+
+        return "https://" + _tld + _s3Domain + ".amazonaws.com/" + _param;
+    }
+
+    getRelativeUrl(namespace: string, directory?: string): string {
+        let relativeUrl = namespace;
+
+        if (directory) {
+            relativeUrl = directory + "/" + relativeUrl;
+        }
+
+        return relativeUrl;
     }
 }
