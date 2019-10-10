@@ -1,17 +1,23 @@
 import { S3Credentials } from "./helpers/s3-credentials";
 import { S3UrlKeyPosition } from "./helpers/enums/s3-url-key-postition.enum";
+import * as stream from "stream";
+import { Readable } from "stream";
+import * as AWS from "aws-sdk";
+import { S3UploadConfig } from "./helpers/s3-upload-config";
+import * as _ from "lodash";
 
 export class DlnS3 {
-    private readonly KEY: string;
-    private readonly SECRET: string;
     private readonly BUCKET: string;
     private readonly REGION: string;
 
     private constructor(credentials: S3Credentials) {
-        this.KEY = credentials.key;
-        this.SECRET = credentials.secret;
         this.BUCKET = credentials.bucket;
         this.REGION = credentials.region;
+
+        AWS.config.update({
+            accessKeyId: credentials.key,
+            secretAccessKey: credentials.secret
+        })
     }
 
     static create(credentials: S3Credentials): DlnS3 {
@@ -38,5 +44,77 @@ export class DlnS3 {
         }
 
         return relativeUrl;
+    }
+
+    async upload(data: Buffer | Uint8Array | string | Readable, namespace: string, config: S3UploadConfig = {}): Promise<any> {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        const s3UploadConfig: AWS.S3.PutObjectRequest = {
+            Bucket: this.BUCKET,
+            Key: this.getRelativeUrl(namespace, config.directory),
+            Body: data,
+        };
+
+        if (config.acl) {
+            s3UploadConfig.ACL = config.acl;
+        }
+        if (config.contentType) {
+            s3UploadConfig.ContentType = config.contentType;
+        }
+        if (config.customMeta) {
+            // Compatible with S3
+            s3UploadConfig.Metadata = _.mapKeys(config.customMeta, function (value, key) {
+                return "x-amz-meta-" + key;
+            });
+        }
+
+        _s3Agent.putObject({
+            Key: "test",
+            Bucket: "First",
+            Body: "xyz"
+        })
+    }
+
+    async uploadStream(readStream: stream.Stream, namespace: string, config: S3UploadConfig): Promise<any> {
+        const uploadStream = (key: string) => {
+            const _s3Agent = new AWS.S3({
+                region: this.REGION
+            });
+
+            const pass = new stream.PassThrough();
+
+            const s3UploadConfig: AWS.S3.PutObjectRequest = {
+                Bucket: this.BUCKET,
+                Key: this.getRelativeUrl(namespace, config.directory),
+                Body: pass,
+            };
+
+            if (config.acl) {
+                s3UploadConfig.ACL = config.acl;
+            }
+            if (config.contentType) {
+                s3UploadConfig.ContentType = config.contentType;
+            }
+            if (config.customMeta) {
+                // Compatible with S3
+                s3UploadConfig.Metadata = _.mapKeys(config.customMeta, function (value, key) {
+                    return "x-amz-meta-" + key;
+                });
+            }
+
+            return {
+                s3Stream: pass,
+                s3Promise: _s3Agent.upload(s3UploadConfig).promise(),
+            };
+        };
+
+        const fileUrl = this.getRelativeUrl(namespace, config.directory);
+        const { s3Stream, s3Promise } = uploadStream(fileUrl);
+
+        readStream.pipe(s3Stream);
+
+        return s3Promise;
     }
 }
