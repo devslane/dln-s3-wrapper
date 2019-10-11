@@ -24,8 +24,7 @@ bower_components
 Thumbs.db
 
 # Ignore built js/.d.ts files
-lib/**/*.d.ts
-lib/**/*.js
-index.js
-index.d.ts
+**/*.d.ts
+**/*.js
+**/*.js.map
 package-lock.json
