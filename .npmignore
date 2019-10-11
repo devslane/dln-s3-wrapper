@@ -14,24 +14,27 @@ coverage
 # Dependency directory
 node_modules
 bower_components
+package.json
+package-lock.json
 
 # Editors
 .idea
 *.iml
-
- package.json
 
 # OS metadata
 .DS_Store
 Thumbs.db
 
 
-# Ignore tests and doc
-test/**/*
-doc/**/*
+# Ignore tests and docs
+test
+doc
 
-# Ignore Source ts files
-index.ts
-lib/**/*.ts
-!lib/**/*.d.ts
-package-lock.json
+# Ignore Source files
+*.ts
+!*.d.ts
+
+npm-debug.log
+.travis.yml
+.gitignore
+tsconfig.json
