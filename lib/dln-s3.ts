@@ -70,11 +70,7 @@ export class DlnS3 {
             });
         }
 
-        _s3Agent.putObject({
-            Key: "test",
-            Bucket: "First",
-            Body: "xyz"
-        })
+        return _s3Agent.putObject(s3UploadConfig).promise();
     }
 
     async uploadStream(readStream: stream.Stream, namespace: string, config: S3UploadConfig): Promise<any> {
