@@ -33,6 +33,7 @@ doc
 # Ignore Source files
 *.ts
 !*.d.ts
+*.js.map
 
 npm-debug.log
 .travis.yml
