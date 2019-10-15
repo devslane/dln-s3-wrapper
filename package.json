@@ -1,6 +1,6 @@
 {
   "name": "dln-s3-wrapper",
-  "version": "0.0.33",
+  "version": "0.0.35",
   "description": "S3 Wrapper in node.",
   "keywords": [
     "DLN",

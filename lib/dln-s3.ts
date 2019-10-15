@@ -59,7 +59,7 @@ export class DlnS3 {
         return s3Promise;
     }
 
-    async _upload(data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough, namespace: string, config: S3UploadConfig = {}): Promise<any> {
+    private async _upload(data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough, namespace: string, config: S3UploadConfig = {}): Promise<any> {
         const _s3Agent = new AWS.S3({
             region: this.REGION
         });
