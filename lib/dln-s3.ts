@@ -90,6 +90,17 @@ export class DlnS3 {
         }))
     }
 
+    async delete(namespace: string, directory?: string): Promise<any> {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        return _s3Agent.deleteObject({
+            Bucket: this.BUCKET,
+            Key: this.getRelativeUrl(namespace, directory)
+        }).promise();
+    }
+
     private async _upload(data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough, namespace: string, config: S3UploadConfig = {}): Promise<any> {
         const _s3Agent = new AWS.S3({
             region: this.REGION
