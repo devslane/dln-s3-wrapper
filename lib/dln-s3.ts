@@ -3,6 +3,7 @@ import { S3UrlKeyPosition } from "./helpers/enums/s3-url-key-postition.enum";
 import * as stream from "stream";
 import * as AWS from "aws-sdk";
 import { S3UploadConfig } from "./helpers/s3-upload-config";
+import { S3Operation } from "./helpers/enums/s3-operation.enum";
 import * as _ from "lodash";
 import * as fs from "fs";
 
@@ -44,6 +45,35 @@ export class DlnS3 {
         }
 
         return relativeUrl;
+    }
+
+    getSignedUrl(operation: S3Operation, namespace: string, config: S3UploadConfig, expiresIn: number = 60 * 5): string {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION,
+            signatureVersion: "v4"
+        });
+
+        const s3Config = {
+            Bucket: this.BUCKET,
+            Key: this.getRelativeUrl(namespace, config.directory),
+            Expires: expiresIn
+        };
+
+        if (config.acl) {
+            s3Config["ACL"] = config.acl;
+        }
+
+        if (config.contentType) {
+            s3Config["ContentType"] = config.contentType;
+        }
+
+        if (config.customMeta) {
+            // Compatible with S3
+            s3Config["Metadata"] = _.mapKeys(config.customMeta, function (value, key) {
+                return "x-amz-meta-" + key;
+            });
+        }
+        return _s3Agent.getSignedUrl(operation, s3Config);
     }
 
     async upload(data: Buffer | Uint8Array | string | stream.Readable, namespace: string, config: S3UploadConfig = {}): Promise<any> {

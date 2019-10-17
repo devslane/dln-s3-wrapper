@@ -7,5 +7,4 @@ export { S3UrlKeyPosition } from "./lib/helpers/enums/s3-url-key-postition.enum"
 
 // Helpers
 export { S3Credentials } from "./lib/helpers/s3-credentials";
-export { S3SignedUrlConfig } from "./lib/helpers/s3-signed-url-config";
 export { S3UploadConfig } from "./lib/helpers/s3-upload-config";
