@@ -76,7 +76,7 @@ export class DlnS3 {
             s3ReadStream
                 .on("error", (error) => {
                     // Catching error that occurred while reading from S3.
-                    reject();
+                    reject(error);
                 })
                 .pipe(fileWriteStream)
                 .on("close", () => {
@@ -85,7 +85,7 @@ export class DlnS3 {
                 .on("error", (error) => {
                     // Catching error that occurred while writing to local file.
                     // TODO Check if stream needs to be closed...
-                    reject();
+                    reject(error);
                 });
         }))
     }
