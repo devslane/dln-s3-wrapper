@@ -13,3 +13,6 @@ import { S3ACL } from "dln-s3-wrapper";
     });
 
 ```
+```typescript
+// The specified key does not exist.
+```

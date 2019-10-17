@@ -4,6 +4,7 @@ import * as stream from "stream";
 import * as AWS from "aws-sdk";
 import { S3UploadConfig } from "./helpers/s3-upload-config";
 import * as _ from "lodash";
+import * as fs from "fs";
 
 export class DlnS3 {
     private readonly BUCKET: string;
@@ -57,6 +58,36 @@ export class DlnS3 {
         readStream.pipe(s3Stream);
 
         return s3Promise;
+    }
+
+    async download(filePath: string, namespace: string, directory?: string): Promise<any> {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        const fileWriteStream = fs.createWriteStream(filePath);
+
+        const s3ReadStream = _s3Agent.getObject({
+            Bucket: this.BUCKET,
+            Key: this.getRelativeUrl(namespace, directory)
+        }).createReadStream();
+
+        return new Promise(((resolve, reject) => {
+            s3ReadStream
+                .on("error", function (e) {
+                    // Catching error that occurred while reading from S3.
+                    reject();
+                })
+                .pipe(fileWriteStream)
+                .on("close", function () {
+                    resolve();
+                })
+                .on("error", function (e) {
+                    // Catching error that occurred while writing to local file.
+                    // TODO Check if stream needs to be closed...
+                    reject();
+                });
+        }))
     }
 
     private async _upload(data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough, namespace: string, config: S3UploadConfig = {}): Promise<any> {
