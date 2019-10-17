@@ -74,15 +74,15 @@ export class DlnS3 {
 
         return new Promise(((resolve, reject) => {
             s3ReadStream
-                .on("error", function (e) {
+                .on("error", (error) => {
                     // Catching error that occurred while reading from S3.
                     reject();
                 })
                 .pipe(fileWriteStream)
-                .on("close", function () {
+                .on("close", () => {
                     resolve();
                 })
-                .on("error", function (e) {
+                .on("error", (error) => {
                     // Catching error that occurred while writing to local file.
                     // TODO Check if stream needs to be closed...
                     reject();
