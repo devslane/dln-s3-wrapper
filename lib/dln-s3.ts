@@ -6,6 +6,7 @@ import { S3UploadConfig } from "./helpers/s3-upload-config";
 import { S3Operation } from "./helpers/enums/s3-operation.enum";
 import * as _ from "lodash";
 import * as fs from "fs";
+import { S3ACL } from "./helpers/enums/s3-acl.enum";
 
 export class DlnS3 {
     private readonly BUCKET: string;
@@ -88,6 +89,18 @@ export class DlnS3 {
         readStream.pipe(s3Stream);
 
         return s3Promise;
+    }
+
+    async changeACL(acl: S3ACL, namespace: string, directory?: string): Promise<any> {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        return _s3Agent.putObjectAcl({
+            ACL: acl,
+            Bucket: this.BUCKET,
+            Key: this.getRelativeUrl(namespace, directory)
+        }).promise()
     }
 
     async download(filePath: string, namespace: string, directory?: string): Promise<any> {
