@@ -91,6 +91,19 @@ export class DlnS3 {
         return s3Promise;
     }
 
+    async copy(sourceNamespace: string, destNamespace: string, acl?: S3ACL, sourceDirectory?: string, destDirectory?: string, sourceBucket: string = this.BUCKET, destinationBukcet: string = this.BUCKET) {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        return _s3Agent.copyObject({
+            ACL: acl,
+            Bucket: destinationBukcet,
+            CopySource: `/${sourceBucket}/${this.getRelativeUrl(sourceNamespace, sourceDirectory)}`,
+            Key: this.getRelativeUrl(destNamespace, destDirectory)
+        }).promise()
+    }
+
     async changeACL(acl: S3ACL, namespace: string, directory?: string): Promise<any> {
         const _s3Agent = new AWS.S3({
             region: this.REGION
