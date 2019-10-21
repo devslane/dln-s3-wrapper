@@ -18,8 +18,8 @@
   "scripts": {
     "build": "npm run build-ts",
     "build-ts": "tsc",
-    "docs": "typedoc --out docs lib",
-    "prepare": "npm run build",
+    "docs": "typedoc --out docs lib --theme minimal --hideGenerator",
+    "prepare": "npm run build && npm run docs",
     "test": "echo \\\"Error: no tests specified\\\" && exit 1"
   },
   "dependencies": {
