@@ -27,8 +27,8 @@ Thumbs.db
 
 
 # Ignore tests and docs
-test
-doc
+tests
+docs
 
 # Ignore Source files
 *.ts
