@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "npm run build-ts",
-    "build-ts": "./node_modules/typescript/bin/tsc",
+    "build-ts": "tsc",
     "docs": "typedoc --out docs lib",
     "prepare": "npm run build",
     "test": "echo \\\"Error: no tests specified\\\" && exit 1"
