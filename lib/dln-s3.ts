@@ -91,7 +91,15 @@ export class DlnS3 {
         return s3Promise;
     }
 
-    async copy(sourceNamespace: string, destNamespace: string, acl?: S3ACL, sourceDirectory?: string, destDirectory?: string, sourceBucket: string = this.BUCKET, destinationBucket: string = this.BUCKET) {
+    async copy(
+        sourceNamespace: string,
+        destNamespace: string,
+        acl?: S3ACL,
+        sourceDirectory?: string,
+        destDirectory?: string,
+        sourceBucket: string = this.BUCKET,
+        destinationBucket: string = this.BUCKET
+    ) {
         const _s3Agent = new AWS.S3({
             region: this.REGION
         });
@@ -157,7 +165,11 @@ export class DlnS3 {
         }).promise();
     }
 
-    private async _upload(data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough, namespace: string, config: S3UploadConfig = {}): Promise<any> {
+    private async _upload(
+        data: Buffer | Uint8Array | string | stream.Readable | stream.PassThrough,
+        namespace: string,
+        config: S3UploadConfig = {}
+    ): Promise<any> {
         const _s3Agent = new AWS.S3({
             region: this.REGION
         });
