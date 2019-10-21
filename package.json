@@ -1,14 +1,17 @@
 {
   "name": "dln-s3-wrapper",
-  "version": "0.0.55",
+  "version": "0.1.0",
   "description": "S3 Wrapper in node.",
   "keywords": [
     "DLN",
     "S3",
     "node"
   ],
+  "homepage": "https://devslane.com",
+  "bugs": "https://github.com/devslane/dln-s3-wrapper/issues",
+  "repository": "github:devslane/dln-s3-wrapper",
   "license": "MIT",
-  "author": "Piyush Mishra",
+  "author": "Piyush Mishra <piyush0mishra@gmail.com>",
   "main": "dist/index.js",
   "directories": {
     "lib": "lib",
@@ -33,5 +36,12 @@
     "tslint": "^5.13.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.2.2"
+  },
+  "engines": {
+    "node": ">= 10.16.0",
+    "npm": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
