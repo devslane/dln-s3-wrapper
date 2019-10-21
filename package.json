@@ -12,7 +12,7 @@
   "repository": "github:devslane/dln-s3-wrapper",
   "license": "MIT",
   "author": "Piyush Mishra <piyush0mishra@gmail.com>",
-  "main": "dist/index.js",
+  "main": "index.js",
   "directories": {
     "lib": "lib",
     "doc": "docs",
