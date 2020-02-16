@@ -34,7 +34,7 @@
     "@types/async": "^3.0.7",
     "@types/lodash": "^4.14.149",
     "tslint": "^5.20.1",
-    "typedoc": "^0.14.2",
+    "typedoc": "^0.16.10",
     "typescript": "^3.7.5"
   },
   "engines": {
