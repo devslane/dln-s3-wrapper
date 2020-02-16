@@ -1,5 +1,5 @@
 {
-  "name": "@devslane/dln-s3-wrapper",
+  "name": "dln-s3-wrapper",
   "version": "0.1.0",
   "description": "S3 Wrapper in node.",
   "keywords": [
