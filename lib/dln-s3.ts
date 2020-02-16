@@ -1,12 +1,12 @@
-import { S3Credentials } from "./helpers/s3-credentials";
-import { S3UrlKeyPosition } from "./helpers/enums/s3-url-key-postition.enum";
-import * as stream from "stream";
-import * as AWS from "aws-sdk";
-import { S3UploadConfig } from "./helpers/s3-upload-config";
-import { S3Operation } from "./helpers/enums/s3-operation.enum";
-import * as _ from "lodash";
-import * as fs from "fs";
-import { S3ACL } from "./helpers/enums/s3-acl.enum";
+import { S3Credentials } from './helpers/s3-credentials';
+import { S3UrlKeyPosition } from './helpers/enums/s3-url-key-postition.enum';
+import * as stream from 'stream';
+import * as AWS from 'aws-sdk';
+import { S3UploadConfig } from './helpers/s3-upload-config';
+import { S3Operation } from './helpers/enums/s3-operation.enum';
+import * as _ from 'lodash';
+import * as fs from 'fs';
+import { S3ACL } from './helpers/enums/s3-acl.enum';
 
 export class DlnS3 {
     private readonly BUCKET: string;
@@ -19,7 +19,7 @@ export class DlnS3 {
         AWS.config.update({
             accessKeyId: credentials.key,
             secretAccessKey: credentials.secret
-        })
+        });
     }
 
     static create(credentials: S3Credentials): DlnS3 {
@@ -30,19 +30,19 @@ export class DlnS3 {
                    isAccelerated = false,
                    keyPosition = S3UrlKeyPosition.PARAM
                } = {}): string {
-        const _tld = keyPosition === S3UrlKeyPosition.TLD ? this.BUCKET + "." : "";
-        const _param = keyPosition === S3UrlKeyPosition.PARAM ? this.BUCKET + "/" : "";
+        const _tld = keyPosition === S3UrlKeyPosition.TLD ? this.BUCKET + '.' : '';
+        const _param = keyPosition === S3UrlKeyPosition.PARAM ? this.BUCKET + '/' : '';
 
-        const _s3Domain = isAccelerated ? "s3-accelerate" : "s3." + this.REGION;
+        const _s3Domain = isAccelerated ? 's3-accelerate' : 's3.' + this.REGION;
 
-        return "https://" + _tld + _s3Domain + ".amazonaws.com/" + _param;
+        return 'https://' + _tld + _s3Domain + '.amazonaws.com/' + _param;
     }
 
     getRelativeUrl(namespace: string, directory?: string): string {
         let relativeUrl = namespace;
 
         if (directory) {
-            relativeUrl = directory + "/" + relativeUrl;
+            relativeUrl = directory + '/' + relativeUrl;
         }
 
         return relativeUrl;
@@ -51,7 +51,7 @@ export class DlnS3 {
     getSignedUrl(operation: S3Operation, namespace: string, config: S3UploadConfig, expiresIn: number = 60 * 5): string {
         const _s3Agent = new AWS.S3({
             region: this.REGION,
-            signatureVersion: "v4"
+            signatureVersion: 'v4'
         });
 
         const s3Config = {
@@ -61,17 +61,17 @@ export class DlnS3 {
         };
 
         if (config.acl) {
-            s3Config["ACL"] = config.acl;
+            s3Config['ACL'] = config.acl;
         }
 
         if (config.contentType) {
-            s3Config["ContentType"] = config.contentType;
+            s3Config['ContentType'] = config.contentType;
         }
 
         if (config.customMeta) {
             // Compatible with S3
-            s3Config["Metadata"] = _.mapKeys(config.customMeta, function (value, key) {
-                return "x-amz-meta-" + key;
+            s3Config['Metadata'] = _.mapKeys(config.customMeta, function (value, key) {
+                return 'x-amz-meta-' + key;
             });
         }
         return _s3Agent.getSignedUrl(operation, s3Config);
@@ -109,7 +109,7 @@ export class DlnS3 {
             Bucket: destinationBucket,
             CopySource: `/${sourceBucket}/${this.getRelativeUrl(sourceNamespace, sourceDirectory)}`,
             Key: this.getRelativeUrl(destNamespace, destDirectory)
-        }).promise()
+        }).promise();
     }
 
     async changeACL(acl: S3ACL, namespace: string, directory?: string): Promise<any> {
@@ -121,7 +121,7 @@ export class DlnS3 {
             ACL: acl,
             Bucket: this.BUCKET,
             Key: this.getRelativeUrl(namespace, directory)
-        }).promise()
+        }).promise();
     }
 
     async download(filePath: string, namespace: string, directory?: string): Promise<any> {
@@ -138,20 +138,20 @@ export class DlnS3 {
 
         return new Promise(((resolve, reject) => {
             s3ReadStream
-                .on("error", (error) => {
+                .on('error', (error) => {
                     // Catching error that occurred while reading from S3.
                     reject(error);
                 })
                 .pipe(fileWriteStream)
-                .on("close", () => {
+                .on('close', () => {
                     resolve();
                 })
-                .on("error", (error) => {
+                .on('error', (error) => {
                     // Catching error that occurred while writing to local file.
                     // TODO Check if stream needs to be closed...
                     reject(error);
                 });
-        }))
+        }));
     }
 
     async delete(namespace: string, directory?: string): Promise<any> {
@@ -189,7 +189,7 @@ export class DlnS3 {
         if (config.customMeta) {
             // Compatible with S3
             s3UploadConfig.Metadata = _.mapKeys(config.customMeta, function (value, key) {
-                return "x-amz-meta-" + key;
+                return 'x-amz-meta-' + key;
             });
         }
 
