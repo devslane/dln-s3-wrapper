@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "description": "S3 Wrapper in node.",
   "keywords": [
+    "DevsLane",
+    "Wrapper",
     "DLN",
     "S3",
     "node"

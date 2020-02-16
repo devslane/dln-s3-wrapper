@@ -1,4 +1,12 @@
-# DLN S3 Wrapper
+# DevsLane S3 Wrapper Node
+
+## Install
+
+```bash
+$ yarn add @devslane/node-s3-wrapper
+```
+
+## Code Examples
 
 ```typescript
 import request from "request";
@@ -13,6 +21,5 @@ import { S3ACL } from "dln-s3-wrapper";
     });
 
 ```
-```typescript
-// The specified key does not exist.
-```
+
+## Development
