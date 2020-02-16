@@ -23,9 +23,6 @@ bower_components
 .DS_Store
 Thumbs.db
 
-# Documentation
-docs
-
 # Ignore built js/.d.ts files
 **/*.d.ts
 **/*.js
