@@ -1,5 +1,5 @@
 {
-  "name": "dln-s3-wrapper",
+  "name": "@devslane/node-s3-wrapper",
   "version": "0.1.0",
   "description": "S3 Wrapper in node.",
   "keywords": [
@@ -41,8 +41,5 @@
   "engines": {
     "node": ">= 10.16.0",
     "yarn": ">= 1.9.0"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/devslane"
   }
 }
