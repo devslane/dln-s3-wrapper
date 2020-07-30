@@ -7,6 +7,7 @@ import { S3Operation } from './helpers/enums/s3-operation.enum';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import { S3ACL } from './helpers/enums/s3-acl.enum';
+import { S3 } from 'aws-sdk';
 
 export class DlnS3 {
     private readonly BUCKET: string;
@@ -163,6 +164,37 @@ export class DlnS3 {
             Bucket: this.BUCKET,
             Key: this.getRelativeUrl(namespace, directory)
         }).promise();
+    }
+
+    async deleteDirectory(directory: string): Promise<void> {
+        const _s3Agent = new AWS.S3({
+            region: this.REGION
+        });
+
+        const listParams = {
+            Bucket: this.BUCKET,
+            Prefix: `${directory}/`
+        };
+        const objects = await _s3Agent.listObjectsV2(listParams).promise();
+
+        if (objects?.Contents?.length === 0) return;
+
+       const deleteParams: S3.Types.DeleteObjectsRequest = {
+                Bucket: this.BUCKET,
+                Delete: {
+                    Objects: []
+                }
+       };
+
+            objects?.Contents?.forEach((content) => {
+                deleteParams.Delete.Objects.push(<S3.ObjectIdentifier>{
+                    Key: content.Key
+                });
+            });
+
+            await _s3Agent.deleteObjects(deleteParams).promise();
+
+            if (objects.IsTruncated) await this.deleteDirectory(directory);
     }
 
     private async _upload(
