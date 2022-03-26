@@ -7,14 +7,17 @@ import { S3Operation } from './helpers/enums/s3-operation.enum';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import { S3ACL } from './helpers/enums/s3-acl.enum';
+import { S3UrlType } from './helpers/enums/s3-url-type.enum';
 
 export class DlnS3 {
     private readonly BUCKET: string;
     private readonly REGION: string;
+    private readonly CDN_URL?: string;
 
     private constructor(credentials: S3Credentials) {
         this.BUCKET = credentials.bucket;
         this.REGION = credentials.region;
+        this.CDN_URL = credentials.cdn_url;
 
         AWS.config.update({
             accessKeyId: credentials.key,
@@ -26,18 +29,67 @@ export class DlnS3 {
         return new DlnS3(credentials);
     }
 
+    getFullURL(
+      namespace: string,
+      directory?: string,
+      urlType = S3UrlType.NORMAL,
+      keyPosition = S3UrlKeyPosition.PARAM // Ignored in case of S3UrlType.CDN
+    ): string {
+        return `${this.getBaseURL(urlType, keyPosition)}${this.getRelativePath(namespace, directory)}`
+    }
+
+    // Doesn't Include Trailing slashes
+    getBaseURL(
+      urlType = S3UrlType.NORMAL,
+      keyPosition = S3UrlKeyPosition.PARAM // Ignored in case of S3UrlType.CDN
+    ): string {
+        if (urlType === S3UrlType.CDN) {
+            const baseURL = this.CDN_URL
+
+            if (!baseURL) {
+                console.error('[DlnS3] Service not initialised with CDN')
+                throw 'Service not initialised with CDN'
+            }
+
+            return baseURL;
+        }
+
+        const _tld = keyPosition === S3UrlKeyPosition.TLD ?  `${this.BUCKET}.` : '';
+        const _param = keyPosition === S3UrlKeyPosition.PARAM ? `${this.BUCKET}` : '';
+
+        const _s3Domain = urlType === S3UrlType.ACCELERATED ? 's3-accelerate.' : 's3.' + this.REGION;
+
+        return 'https://' + _tld + _s3Domain + '.amazonaws.com/' + _param;
+    }
+
+    // Includes leading Slashes
+    getRelativePath(
+      namespace: string,
+      directory?: string
+    ): string {
+        return  `/${this.getRelativeUrl(namespace, directory)}`
+    }
+
+    // Includes Trailing slashes
+    /**
+    * @deprecated Use getBaseURL()
+    */
     getRootUrl({
                    isAccelerated = false,
                    keyPosition = S3UrlKeyPosition.PARAM
                } = {}): string {
-        const _tld = keyPosition === S3UrlKeyPosition.TLD ? this.BUCKET + '.' : '';
-        const _param = keyPosition === S3UrlKeyPosition.PARAM ? this.BUCKET + '/' : '';
+        const _tld = keyPosition === S3UrlKeyPosition.TLD ?  `${this.BUCKET}.` : '';
+        const _param = keyPosition === S3UrlKeyPosition.PARAM ? `${this.BUCKET}/` : '';
 
         const _s3Domain = isAccelerated ? 's3-accelerate' : 's3.' + this.REGION;
 
         return 'https://' + _tld + _s3Domain + '.amazonaws.com/' + _param;
     }
 
+    // Excludes leading Slashes
+    /**
+     * @deprecated Use getRelativePath()
+     */
     getRelativeUrl(namespace: string, directory?: string): string {
         let relativeUrl = namespace;
 

@@ -3,4 +3,5 @@ export interface S3Credentials {
     secret: string;
     bucket: string;
     region: string;
+    cdn_url?: string;
 }
