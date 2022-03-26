@@ -78,12 +78,10 @@ export class DlnS3 {
                    isAccelerated = false,
                    keyPosition = S3UrlKeyPosition.PARAM
                } = {}): string {
-        const _tld = keyPosition === S3UrlKeyPosition.TLD ?  `${this.BUCKET}.` : '';
-        const _param = keyPosition === S3UrlKeyPosition.PARAM ? `${this.BUCKET}/` : '';
-
-        const _s3Domain = isAccelerated ? 's3-accelerate' : 's3.' + this.REGION;
-
-        return 'https://' + _tld + _s3Domain + '.amazonaws.com/' + _param;
+        return  `${this.getBaseURL(
+          isAccelerated ? S3UrlType.ACCELERATED : S3UrlType.NORMAL,
+          keyPosition
+        )}/`
     }
 
     // Excludes leading Slashes
